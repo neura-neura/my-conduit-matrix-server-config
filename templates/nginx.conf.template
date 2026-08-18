@@ -24,7 +24,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"m.homeserver":{"base_url":"https://__SERVER_NAME__"},"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"},{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
+        return 200 '{"m.homeserver":{"base_url":"http://__SERVER_NAME__"},"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
     }
 
     location = /.well-known/matrix/server {
@@ -43,7 +43,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}]}';
+        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}]}';
     }
 
     location ^~ /_matrix/client/v1/rtc/transports {
@@ -54,7 +54,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}]}';
+        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}]}';
     }
 
     location = /livekit/jwt {

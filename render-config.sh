@@ -53,6 +53,7 @@ fi
 
 replace "$SCRIPT_DIR/templates/nginx.conf.template" "$CONFIG_DIR/nginx.conf"
 replace "$SCRIPT_DIR/templates/livekit.yaml.template" "$CONFIG_DIR/livekit.yaml"
+replace "$SCRIPT_DIR/templates/cinny-config.json.template" "$CONFIG_DIR/cinny-config.json"
 cp "$SCRIPT_DIR/templates/nginx-main.conf" "$CONFIG_DIR/nginx-main.conf"
 
 sed \

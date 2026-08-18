@@ -82,15 +82,16 @@ http://192.168.196.65:6168
 
 ## Voice Rooms
 
-Cinny voice rooms work on this stack over HTTP. The installer advertises MatrixRTC discovery on both HTTP and HTTPS:
+Cinny voice rooms work on this stack over HTTP. The installer advertises MatrixRTC discovery on HTTP only:
 
 ```text
 http://$SERVER_NAME/.well-known/matrix/client
-https://$SERVER_NAME/.well-known/matrix/client
 http://$SERVER_NAME/_matrix/client/v1/rtc/transports
 ```
 
-HTTPS uses a self-signed certificate generated on first install. That is enough for private VPN use. It is not a public CA certificate.
+Use `http://$SERVER_NAME` in Cinny, including the `http://` prefix. If someone types only `192.168.196.65:6167`, Cinny first tries HTTPS. That path uses a self-signed certificate and a fresh Cinny install will refuse it.
+
+The optional Cinny web client is preconfigured with the HTTP homeserver address so people do not have to guess the URL.
 
 Element Desktop can still refuse Element Call on Conduit with `MISSING_MATRIX_RTC_TRANSPORT`, even when the same discovery works in Cinny. This repo does not patch Element. Use Cinny for continuous voice rooms.
 
@@ -202,6 +203,13 @@ If Docker says it cannot bind the address, verify that the IP exists on the serv
 ```bash
 ip -brief addr
 ```
+
+If a new Cinny install cannot find the homeserver:
+
+- Make sure ZeroTier is connected first.
+- Type `http://$SERVER_NAME` exactly, including `http://`.
+- Do not type only the IP and port. Cinny will try HTTPS first and fail.
+- Close Cinny completely and try again if the first attempt failed.
 
 If clients can reach Matrix but Cinny still says calling is unsupported:
 

@@ -97,6 +97,7 @@ copy_file "$SOURCE_DIR/templates/nginx-main.conf" "$INSTALL_DIR/templates/nginx-
 copy_file "$SOURCE_DIR/templates/nginx.conf.template" "$INSTALL_DIR/templates/nginx.conf.template"
 copy_file "$SOURCE_DIR/templates/conduit.toml.template" "$INSTALL_DIR/templates/conduit.toml.template"
 copy_file "$SOURCE_DIR/templates/livekit.yaml.template" "$INSTALL_DIR/templates/livekit.yaml.template"
+copy_file "$SOURCE_DIR/templates/cinny-config.json.template" "$INSTALL_DIR/templates/cinny-config.json.template"
 copy_file "$SOURCE_DIR/templates/conduit-matrix.service.template" "$INSTALL_DIR/templates/conduit-matrix.service.template"
 copy_file "$ENV_FILE" "$INSTALL_DIR/.env"
 chmod 0755 "$INSTALL_DIR/wait-for-ip.sh" "$INSTALL_DIR/render-config.sh"
@@ -125,7 +126,6 @@ echo
 echo "Installed successfully."
 echo "Homeserver:"
 echo "  http://$SERVER_NAME"
-echo "  https://$SERVER_NAME"
 echo
 echo "Optional Cinny web client:"
 echo "  http://$HOST_IP:${CINNY_PORT:-6168}"
@@ -134,5 +134,6 @@ echo "Autostart is enabled as $SERVICE_NAME.service."
 echo "After reboot it waits for $HOST_IP, then starts Matrix and the voice rooms."
 echo
 echo "Create the first account from a Matrix client, then open a voice room."
+echo "Tell people to use Cinny with http://$SERVER_NAME, including http://."
 echo "Cinny Desktop works over HTTP. Element Desktop may still refuse MatrixRTC"
 echo "on a Conduit homeserver even when discovery is present."
