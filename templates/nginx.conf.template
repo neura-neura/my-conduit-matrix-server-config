@@ -24,7 +24,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"m.homeserver":{"base_url":"http://__SERVER_NAME__"},"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
+        return 200 '{"m.homeserver":{"base_url":"http://__SERVER_NAME__"},"m.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
     }
 
     location = /.well-known/matrix/server {
@@ -43,7 +43,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}]}';
+        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}]}';
     }
 
     location ^~ /_matrix/client/v1/rtc/transports {
@@ -54,7 +54,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"http://__SERVER_NAME__/livekit/jwt"}]}';
+        return 200 '{"rtc_transports":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}]}';
     }
 
     location = /livekit/jwt {
@@ -70,6 +70,12 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_hide_header Access-Control-Allow-Headers;
+        proxy_hide_header Access-Control-Allow-Methods;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
     }
 
     location ^~ /livekit/sfu/ {
@@ -93,6 +99,12 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_hide_header Access-Control-Allow-Headers;
+        proxy_hide_header Access-Control-Allow-Methods;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
     }
 
     location = /trust {
@@ -128,6 +140,14 @@ server {
         default_type application/octet-stream;
         add_header Access-Control-Allow-Origin * always;
         add_header Content-Disposition "attachment; filename=install-matrix-ca.cmd" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+    }
+
+    location = /trust/neura-matrix-trust.mobileconfig {
+        alias /etc/nginx/certs/neura-matrix-trust.mobileconfig;
+        default_type application/x-apple-aspen-config;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Content-Disposition "attachment; filename=neura-matrix-trust.mobileconfig" always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
     }
 

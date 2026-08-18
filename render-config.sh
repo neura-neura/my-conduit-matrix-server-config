@@ -59,6 +59,9 @@ replace "$SCRIPT_DIR/templates/cinny-config.json.template" "$CONFIG_DIR/cinny-co
 replace "$SCRIPT_DIR/templates/trust-index.html.template" "$CERT_DIR/trust-index.html"
 replace "$SCRIPT_DIR/templates/install-matrix-ca.ps1.template" "$CERT_DIR/install-matrix-ca.ps1"
 replace "$SCRIPT_DIR/templates/install-matrix-ca.cmd.template" "$CERT_DIR/install-matrix-ca.cmd"
+if [ -f "$SCRIPT_DIR/certs/neura-matrix-trust.mobileconfig" ]; then
+  cp "$SCRIPT_DIR/certs/neura-matrix-trust.mobileconfig" "$CERT_DIR/neura-matrix-trust.mobileconfig"
+fi
 cp "$SCRIPT_DIR/templates/cinny-patch-http-voice.sh" "$CONFIG_DIR/cinny-patch-http-voice.sh"
 chmod 0755 "$CONFIG_DIR/cinny-patch-http-voice.sh"
 cp "$SCRIPT_DIR/templates/nginx-main.conf" "$CONFIG_DIR/nginx-main.conf"

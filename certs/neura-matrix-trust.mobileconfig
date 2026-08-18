@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadType</key>
+			<string>com.apple.security.root</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>PayloadIdentifier</key>
+			<string>dev.neura.matrix.local-ca</string>
+			<key>PayloadUUID</key>
+			<string>F8FB83DC-6879-4639-BB6D-EC2BAA3831FB</string>
+			<key>PayloadDisplayName</key>
+			<string>Neura Matrix Local CA</string>
+			<key>PayloadDescription</key>
+			<string>Trust the local Matrix certificate so Element X can join voice rooms.</string>
+			<key>PayloadCertificateFileName</key>
+			<string>neura-matrix-ca.crt</string>
+			<key>PayloadContent</key>
+			<data>
+			MIIDEzCCAfugAwIBAgIUFonjOeoaAG4OegvPS0I+o0c9WygwDQYJ
+			KoZIhvcNAQELBQAwIDEeMBwGA1UEAwwVTmV1cmEgTWF0cml4IExv
+			Y2FsIENBMB4XDTI2MDgxODE5MTc0OFoXDTM2MDgxNTE5MjI0OFow
+			IDEeMBwGA1UEAwwVTmV1cmEgTWF0cml4IExvY2FsIENBMIIBIjAN
+			BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj8AP4+IYRQrYp/sj
+			Zf+gJF+yR1ilKS7lqk3bEQ9Y02NdTGE+6znDueyD5kFug4SXq+I9
+			v9q5YT02ck1P39u/Q/uKJjloGxp7fVShqYduaKJ+Wf4L5eDNULi/
+			kNaXHBjp3zBVduHnTJXkkjfD7VTClqtKsQU+/QuQgPJUVfog1BNh
+			Q8R/egGyLgwkIcMNVfS8Ez3SklveNf65rykcqTXlur32tVW90UVK
+			awdjpmNCkYPZ2577KUyvnnytEg1h+JHFqjr9eseh12xxmmybKIcC
+			nSaxNX03L7JdsUY7buw1AZkFhDufccCPQQaHmQdqTPto/eQrjzsd
+			XSS0m93k5/cjzQIDAQABo0UwQzASBgNVHRMBAf8ECDAGAQH/AgEB
+			MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUfphS6W1fgSzG+JSb
+			tQCSrWu81RgwDQYJKoZIhvcNAQELBQADggEBAGzxWB1UbeuizQXS
+			RGqkvwvGB4P5GnxVdQwnn2EfB8aPb6zXdk7Z8sjNzOp5l+K7GB6d
+			fkYZ/xVRvYfXBZjz1nLSyej4SPjDve+il3zVaVm59BjJCTlpVBdY
+			lUBxMdy2URz2vzLmTc4Xo+vK+wIE2hhOcvl/DVJIMpnrSvVP0YJ6
+			x149TYMuVeQsTQWB6H2YdxtipsorgVAcm59E/IGbeto+dWcQZyFT
+			JANws85dh87OKNZWm6PLVl8MGjWVCr6XW8r7scNXYPJgzwbJx1mM
+			YnAznjBFjPdAhucqyMNDUYwjpp2R+XY2+nzmL6EW1/Kk0HTZciMX
+			FzrEYvWP3TmKBuM=
+			</data>
+		</dict>
+	</array>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>PayloadIdentifier</key>
+	<string>dev.neura.matrix.trust</string>
+	<key>PayloadUUID</key>
+	<string>DFE986FE-3AD1-4D58-8E4B-D267985C7CA9</string>
+	<key>PayloadDisplayName</key>
+	<string>Neura Matrix Trust</string>
+	<key>PayloadDescription</key>
+	<string>Install this once, then enable Full Trust for Neura Matrix Local CA in iOS Certificate Trust Settings.</string>
+	<key>PayloadOrganization</key>
+	<string>Neura Matrix</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+</dict>
+</plist>

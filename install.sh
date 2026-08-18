@@ -104,6 +104,7 @@ copy_file "$SOURCE_DIR/templates/install-matrix-ca.ps1.template" "$INSTALL_DIR/t
 copy_file "$SOURCE_DIR/templates/install-matrix-ca.cmd.template" "$INSTALL_DIR/templates/install-matrix-ca.cmd.template"
 copy_file "$SOURCE_DIR/templates/conduit-matrix.service.template" "$INSTALL_DIR/templates/conduit-matrix.service.template"
 copy_file "$SOURCE_DIR/certs/neura-matrix-ca.crt" "$INSTALL_DIR/certs/neura-matrix-ca.crt"
+copy_file "$SOURCE_DIR/certs/neura-matrix-trust.mobileconfig" "$INSTALL_DIR/certs/neura-matrix-trust.mobileconfig"
 copy_file "$ENV_FILE" "$INSTALL_DIR/.env"
 chmod 0755 "$INSTALL_DIR/wait-for-ip.sh" "$INSTALL_DIR/render-config.sh"
 

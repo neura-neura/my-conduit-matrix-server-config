@@ -130,6 +130,19 @@ Send this to every new person:
 
 If they type only `192.168.196.65:6167`, Cinny tries HTTPS first and fails.
 
+## iPhone / Element X
+
+Element X on iPhone can log in over HTTP, then fail voice rooms with `MISSING_MATRIX_RTC_TRANSPORT` until it trusts this server's HTTPS certificate.
+
+On the iPhone, in Safari:
+
+1. Open [http://192.168.196.65:6167/trust/](http://192.168.196.65:6167/trust/).
+2. Tap **Install on iPhone**.
+3. Settings → General → VPN & Device Management → install **Neura Matrix Trust**.
+4. Settings → General → About → Certificate Trust Settings → enable Full Trust for **Neura Matrix Local CA**.
+5. Force-close Element X and open it again.
+6. Sign in with `http://192.168.196.65:6167`.
+
 ## Voice Rooms
 
 Cinny voice rooms work on this stack over HTTP after the certificate is trusted.

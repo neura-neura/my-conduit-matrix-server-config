@@ -22,9 +22,11 @@
   <main>
     <h1>Install this certificate before joining a Cinny voice room</h1>
     <p>Matrix chat works over HTTP. Cinny Desktop still checks voice rooms over HTTPS, so every new person must trust this local certificate once.</p>
+    <p>Element X on iPhone also needs this certificate, then Full Trust, then a restart of the app. Without that it logs in but voice rooms fail with <code>MISSING_MATRIX_RTC_TRANSPORT</code>.</p>
     <p><a class="button" href="/trust/neura-matrix-ca.crt">Download certificate</a>
        <a class="button secondary" href="/trust/install-matrix-ca.ps1">Download Windows installer</a>
        <a class="button secondary" href="/trust/install-matrix-ca.cmd">One-click Windows installer</a></p>
+    <p><a class="button" href="/trust/neura-matrix-trust.mobileconfig">Install on iPhone</a></p>
     <div class="note">
       <p><strong>Required homeserver address</strong></p>
       <p><code>http://__SERVER_NAME__</code></p>
@@ -46,6 +48,17 @@
     <h2>macOS / Linux</h2>
     <p>Download the certificate, then run <code>scripts/trust-matrix-ca.sh</code> from the cloned repo, or import <code>certs/neura-matrix-ca.crt</code> into the OS trust store.</p>
     <p class="note">Skip this only if you use the optional Cinny web client at <code>http://__HOST_IP__:__CINNY_PORT__</code>. Cinny Desktop still needs the certificate for voice-room discovery.</p>
+    <h2>iPhone / Element X</h2>
+    <ol>
+      <li>On the iPhone, open <code>http://__SERVER_NAME__/trust/</code> in Safari.</li>
+      <li>Tap <strong>Install on iPhone</strong> and allow the profile.</li>
+      <li>Open Settings and tap the profile prompt, or go to <strong>General → VPN & Device Management</strong>.</li>
+      <li>Install <strong>Neura Matrix Trust</strong>.</li>
+      <li>Then go to <strong>General → About → Certificate Trust Settings</strong>.</li>
+      <li>Turn on Full Trust for <strong>Neura Matrix Local CA</strong>.</li>
+      <li>Force-close Element X and open it again.</li>
+      <li>Sign in with <code>http://__SERVER_NAME__</code>.</li>
+    </ol>
   </main>
 </body>
 </html>
