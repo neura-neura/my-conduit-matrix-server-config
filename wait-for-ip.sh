@@ -15,7 +15,11 @@ if [ -f "$SCRIPT_DIR/.env" ]; then
   set +a
 fi
 
-: "${HOST_IP:?Set HOST_IP in .env}"
+if [ -n "${1:-}" ]; then
+  HOST_IP="$1"
+fi
+
+: "${HOST_IP:?Set HOST_IP in .env or pass it as the first argument}"
 
 WAIT_TIMEOUT_SECONDS="${WAIT_TIMEOUT_SECONDS:-300}"
 WAIT_INTERVAL_SECONDS="${WAIT_INTERVAL_SECONDS:-2}"

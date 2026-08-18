@@ -97,36 +97,17 @@ copy_file "$SOURCE_DIR/templates/nginx-main.conf" "$INSTALL_DIR/templates/nginx-
 copy_file "$SOURCE_DIR/templates/nginx.conf.template" "$INSTALL_DIR/templates/nginx.conf.template"
 copy_file "$SOURCE_DIR/templates/conduit.toml.template" "$INSTALL_DIR/templates/conduit.toml.template"
 copy_file "$SOURCE_DIR/templates/livekit.yaml.template" "$INSTALL_DIR/templates/livekit.yaml.template"
+copy_file "$SOURCE_DIR/templates/conduit-matrix.service.template" "$INSTALL_DIR/templates/conduit-matrix.service.template"
 copy_file "$ENV_FILE" "$INSTALL_DIR/.env"
 chmod 0755 "$INSTALL_DIR/wait-for-ip.sh" "$INSTALL_DIR/render-config.sh"
 
 "$INSTALL_DIR/render-config.sh" "$DATA_DIR"
 
-cat > "$SERVICE_FILE" <<EOF
-[Unit]
-Description=Conduit Matrix homeserver with Element Call / MatrixRTC (Docker Compose)
-Requires=docker.service
-After=docker.service network-online.target
-Wants=network-online.target
-StartLimitIntervalSec=0
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-WorkingDirectory=$INSTALL_DIR
-EnvironmentFile=$INSTALL_DIR/.env
-TimeoutStartSec=600
-TimeoutStopSec=120
-Restart=on-failure
-RestartSec=15
-ExecStartPre=$INSTALL_DIR/wait-for-ip.sh
-ExecStartPre=$INSTALL_DIR/render-config.sh $DATA_DIR
-ExecStart=$DOCKER_BIN compose --env-file $INSTALL_DIR/.env -f $INSTALL_DIR/compose.yaml up -d --remove-orphans
-ExecStop=$DOCKER_BIN compose --env-file $INSTALL_DIR/.env -f $INSTALL_DIR/compose.yaml down
-
-[Install]
-WantedBy=multi-user.target
-EOF
+sed \
+  -e "s|__INSTALL_DIR__|$INSTALL_DIR|g" \
+  -e "s|__DATA_DIR__|$DATA_DIR|g" \
+  -e "s|__DOCKER_BIN__|$DOCKER_BIN|g" \
+  "$INSTALL_DIR/templates/conduit-matrix.service.template" > "$SERVICE_FILE"
 
 systemctl daemon-reload
 systemctl enable "$SERVICE_NAME.service"
@@ -148,6 +129,9 @@ echo "  https://$SERVER_NAME"
 echo
 echo "Optional Cinny web client:"
 echo "  http://$HOST_IP:${CINNY_PORT:-6168}"
+echo
+echo "Autostart is enabled as $SERVICE_NAME.service."
+echo "After reboot it waits for $HOST_IP, then starts Matrix and the voice rooms."
 echo
 echo "Create the first account from a Matrix client, then open a voice room."
 echo "Cinny Desktop works over HTTP. Element Desktop may still refuse MatrixRTC"

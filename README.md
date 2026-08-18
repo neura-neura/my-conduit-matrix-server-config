@@ -62,6 +62,8 @@ Install and start the service:
 sudo ./install.sh
 ```
 
+That command also enables `conduit-matrix.service`. After a reboot the service waits for your VPN IP and starts Matrix by itself. You do not need to add autostart by hand.
+
 Connect a Matrix client to:
 
 ```text
@@ -162,12 +164,14 @@ Create the first account from a Matrix client. Registration is enabled by defaul
 
 ## Reboot Behavior
 
-The generated systemd service does this after every boot:
+`install.sh` writes and enables `conduit-matrix.service`. That service does this after every boot:
 
 1. Waits for Docker.
 2. Waits until `HOST_IP` appears on a local network interface.
 3. Regenerates Nginx, Conduit, and LiveKit config from `.env` if needed.
 4. Runs `docker compose up -d`.
+
+The unit file lives in the repo as `templates/conduit-matrix.service.template`. The installer fills in the install path and copies it to `/etc/systemd/system/conduit-matrix.service`.
 
 This prevents the common reboot failure where Docker starts before the VPN interface is ready.
 
