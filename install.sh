@@ -79,7 +79,7 @@ DOCKER_BIN=$(command -v docker)
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 
 echo "Installing Conduit Matrix project into $INSTALL_DIR"
-mkdir -p "$INSTALL_DIR/templates" "$DATA_DIR/config" "$DATA_DIR/certs" "$DATA_DIR/conduit"
+mkdir -p "$INSTALL_DIR/templates" "$INSTALL_DIR/certs" "$DATA_DIR/config" "$DATA_DIR/certs" "$DATA_DIR/conduit"
 
 copy_file() {
   src="$1"
@@ -98,7 +98,12 @@ copy_file "$SOURCE_DIR/templates/nginx.conf.template" "$INSTALL_DIR/templates/ng
 copy_file "$SOURCE_DIR/templates/conduit.toml.template" "$INSTALL_DIR/templates/conduit.toml.template"
 copy_file "$SOURCE_DIR/templates/livekit.yaml.template" "$INSTALL_DIR/templates/livekit.yaml.template"
 copy_file "$SOURCE_DIR/templates/cinny-config.json.template" "$INSTALL_DIR/templates/cinny-config.json.template"
+copy_file "$SOURCE_DIR/templates/cinny-patch-http-voice.sh" "$INSTALL_DIR/templates/cinny-patch-http-voice.sh"
+copy_file "$SOURCE_DIR/templates/trust-index.html.template" "$INSTALL_DIR/templates/trust-index.html.template"
+copy_file "$SOURCE_DIR/templates/install-matrix-ca.ps1.template" "$INSTALL_DIR/templates/install-matrix-ca.ps1.template"
+copy_file "$SOURCE_DIR/templates/install-matrix-ca.cmd.template" "$INSTALL_DIR/templates/install-matrix-ca.cmd.template"
 copy_file "$SOURCE_DIR/templates/conduit-matrix.service.template" "$INSTALL_DIR/templates/conduit-matrix.service.template"
+copy_file "$SOURCE_DIR/certs/neura-matrix-ca.crt" "$INSTALL_DIR/certs/neura-matrix-ca.crt"
 copy_file "$ENV_FILE" "$INSTALL_DIR/.env"
 chmod 0755 "$INSTALL_DIR/wait-for-ip.sh" "$INSTALL_DIR/render-config.sh"
 
@@ -127,13 +132,15 @@ echo "Installed successfully."
 echo "Homeserver:"
 echo "  http://$SERVER_NAME"
 echo
+echo "Certificate page for new people:"
+echo "  http://$SERVER_NAME/trust/"
+echo
 echo "Optional Cinny web client:"
 echo "  http://$HOST_IP:${CINNY_PORT:-6168}"
 echo
 echo "Autostart is enabled as $SERVICE_NAME.service."
 echo "After reboot it waits for $HOST_IP, then starts Matrix and the voice rooms."
 echo
-echo "Create the first account from a Matrix client, then open a voice room."
-echo "Tell people to use Cinny with http://$SERVER_NAME, including http://."
-echo "Cinny Desktop works over HTTP. Element Desktop may still refuse MatrixRTC"
-echo "on a Conduit homeserver even when discovery is present."
+echo "Every Cinny Desktop user must install the certificate from /trust/ once."
+echo "They must sign in with http://$SERVER_NAME, including http://."
+echo "Element Desktop may still refuse MatrixRTC on Conduit."

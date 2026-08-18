@@ -95,6 +95,42 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    location = /trust {
+        return 308 /trust/;
+    }
+
+    location = /trust/ {
+        root /etc/nginx/certs;
+        try_files /trust-index.html =404;
+        default_type text/html;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+    }
+
+    location = /trust/neura-matrix-ca.crt {
+        alias /etc/nginx/certs/neura-matrix-ca.crt;
+        default_type application/x-x509-ca-cert;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Content-Disposition "attachment; filename=neura-matrix-ca.crt" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+    }
+
+    location = /trust/install-matrix-ca.ps1 {
+        alias /etc/nginx/certs/install-matrix-ca.ps1;
+        default_type text/plain;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Content-Disposition "attachment; filename=install-matrix-ca.ps1" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+    }
+
+    location = /trust/install-matrix-ca.cmd {
+        alias /etc/nginx/certs/install-matrix-ca.cmd;
+        default_type application/octet-stream;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Content-Disposition "attachment; filename=install-matrix-ca.cmd" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+    }
+
     location = /healthz {
         proxy_pass http://lk-jwt:8080/healthz;
         proxy_set_header Host $host;
@@ -113,3 +149,4 @@ server {
         client_max_body_size 50M;
     }
 }
+

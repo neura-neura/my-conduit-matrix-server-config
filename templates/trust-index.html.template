@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Install the Matrix certificate</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Segoe UI, sans-serif; background: #111; color: #eee; }
+    main { max-width: 42rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1 { font-size: 1.6rem; line-height: 1.25; }
+    p, li { line-height: 1.5; }
+    ol { padding-left: 1.25rem; }
+    a.button { display: inline-block; margin: .35rem .5rem .35rem 0; padding: .7rem 1rem; border-radius: .6rem; background: #4f7cff; color: #fff; text-decoration: none; }
+    a.secondary { background: #333; }
+    code { background: #222; padding: .1rem .35rem; border-radius: .3rem; }
+    .note { background: #1b1b1b; border: 1px solid #333; border-radius: .7rem; padding: 1rem; }
+    .zh { color: #bbb; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Install this certificate before joining a Cinny voice room</h1>
+    <p>Matrix chat works over HTTP. Cinny Desktop still checks voice rooms over HTTPS, so every new person must trust this local certificate once.</p>
+    <p><a class="button" href="/trust/neura-matrix-ca.crt">Download certificate</a>
+       <a class="button secondary" href="/trust/install-matrix-ca.ps1">Download Windows installer</a>
+       <a class="button secondary" href="/trust/install-matrix-ca.cmd">One-click Windows installer</a></p>
+    <div class="note">
+      <p><strong>Required homeserver address</strong></p>
+      <p><code>http://__SERVER_NAME__</code></p>
+      <p>Type the <code>http://</code> prefix. If someone types only the IP and port, Cinny tries HTTPS first and fails.</p>
+    </div>
+    <h2>Windows</h2>
+    <ol>
+      <li>Download the certificate.</li>
+      <li>Or download the one-click Windows installer and double-click it.</li>
+      <li>Double-click <code>neura-matrix-ca.crt</code>.</li>
+      <li>Click <strong>Install Certificate</strong> / <span class="zh">安装证书</span>.</li>
+      <li>Choose <strong>Current User</strong> / <span class="zh">当前用户</span>.</li>
+      <li>Select <strong>Place all certificates in the following store</strong> / <span class="zh">将所有的证书都放入下列存储</span>.</li>
+      <li>Browse to <strong>Trusted Root Certification Authorities</strong> / <span class="zh">受信任的根证书颁发机构</span>.</li>
+      <li>Finish, then click <strong>Yes</strong> / <span class="zh">是</span>.</li>
+      <li>Fully close Cinny and open it again.</li>
+      <li>Sign in with <code>http://__SERVER_NAME__</code>.</li>
+    </ol>
+    <h2>macOS / Linux</h2>
+    <p>Download the certificate, then run <code>scripts/trust-matrix-ca.sh</code> from the cloned repo, or import <code>certs/neura-matrix-ca.crt</code> into the OS trust store.</p>
+    <p class="note">Skip this only if you use the optional Cinny web client at <code>http://__HOST_IP__:__CINNY_PORT__</code>. Cinny Desktop still needs the certificate for voice-room discovery.</p>
+  </main>
+</body>
+</html>
+

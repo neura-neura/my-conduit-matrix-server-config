@@ -1,0 +1,11 @@
+@echo off
+setlocal
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "$ErrorActionPreference='Stop'; $url='http://__SERVER_NAME__/trust/neura-matrix-ca.crt'; $out=Join-Path $env:TEMP 'neura-matrix-ca.crt'; Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile $out; Import-Certificate -FilePath $out -CertStoreLocation Cert:\CurrentUser\Root | Out-Null; Import-Certificate -FilePath $out -CertStoreLocation Cert:\CurrentUser\TrustedPeople | Out-Null; Write-Host 'Certificate installed. Close Cinny completely, then sign in with http://__SERVER_NAME__'"
+if errorlevel 1 (
+  echo Install failed. Right-click this file and choose Run with PowerShell, or install neura-matrix-ca.crt manually.
+  pause
+  exit /b 1
+)
+echo Done.
+pause

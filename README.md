@@ -2,13 +2,55 @@
 
 Run a self-hosted [Conduit](https://conduit.rs) Matrix homeserver with Docker Compose, bound to a VPN address such as ZeroTier, Tailscale, WireGuard, or any other private interface.
 
-This stack also publishes the MatrixRTC discovery that Cinny needs for continuous voice rooms. Nginx multiplexes HTTP and HTTPS on one Matrix port, LiveKit handles media, and a systemd service waits until the VPN IP exists before starting Docker Compose. Without that wait, Docker can fail after a reboot with errors like `cannot assign requested address`.
+This stack publishes the MatrixRTC discovery that Cinny needs for continuous voice rooms. Nginx multiplexes HTTP and HTTPS on one Matrix port, LiveKit handles media, and a systemd service waits until the VPN IP exists before starting Docker Compose.
+
+## Important: every Cinny Desktop user must install the certificate
+
+This is the part that will break voice rooms if you skip it. Do not skip it on a new computer.
+
+Chat works over HTTP. Cinny Desktop still re-checks voice rooms over HTTPS after login. That HTTPS check uses this server's local certificate. A new PC will log in and then say:
+
+`Your homeserver does not support calling.`
+
+Fix it once per person. Future installs should only need this:
+
+1. Join the same VPN / ZeroTier network.
+2. Open [http://192.168.196.65:6167/trust/](http://192.168.196.65:6167/trust/).
+3. Click **One-click Windows installer**, or download and install `neura-matrix-ca.crt`.
+4. Fully close Cinny and open it again.
+5. Sign in with exactly `http://192.168.196.65:6167`, including `http://`.
+
+Windows one-click installer:
+
+```text
+http://192.168.196.65:6167/trust/install-matrix-ca.cmd
+```
+
+Or from a clone of this repo:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\trust-matrix-ca.ps1
+```
+
+Chinese Windows button names:
+
+- 安装证书 = Install Certificate
+- 当前用户 = Current User
+- 将所有的证书都放入下列存储 = Place all certificates in the following store
+- 受信任的根证书颁发机构 = Trusted Root Certification Authorities
+- 是 = Yes
+- 完成 = Finish
+
+Do not skip the certificate because "HTTP already works". Login can succeed and voice can still fail.
+
+The optional Cinny web client at `http://192.168.196.65:6168` does not need the certificate.
 
 ## What This Installs
 
 - A Conduit homeserver.
 - Nginx on one public Matrix port, serving both HTTP and HTTPS.
 - LiveKit plus Element's LiveKit JWT service for MatrixRTC / Cinny voice rooms.
+- A `/trust/` page that serves the local certificate and a Windows installer.
 - An optional Cinny web client.
 - Persistent homeserver data on the host.
 - A systemd service that starts everything automatically after reboot.
@@ -26,7 +68,7 @@ The default ports are:
 - A Linux server with systemd.
 - Docker Engine.
 - Docker Compose v2, available as `docker compose`.
-- `openssl`, used once to generate a self-signed certificate if none exists yet.
+- `openssl`, used once to generate a certificate if none exists yet.
 - A VPN/private IP already configured on the server.
 
 This was designed for VPN-only Matrix hosting. It works well with ZeroTier, but it is not ZeroTier-specific.
@@ -62,7 +104,7 @@ Install and start the service:
 sudo ./install.sh
 ```
 
-That command also enables `conduit-matrix.service`. After a reboot the service waits for your VPN IP and starts Matrix by itself. You do not need to add autostart by hand.
+That command also enables `conduit-matrix.service`. After a reboot the service waits for your VPN IP and starts Matrix by itself.
 
 Connect a Matrix client to:
 
@@ -70,28 +112,34 @@ Connect a Matrix client to:
 http://192.168.196.65:6167
 ```
 
-Replace that address with your own `http://$SERVER_NAME`.
-
-Cinny Desktop works over HTTP. Other people on the same VPN can install stock Cinny, join ZeroTier, and use the same homeserver address. No custom Cinny build is required.
-
 An optional Cinny web client is also published at:
 
 ```text
 http://192.168.196.65:6168
 ```
 
+## Invite checklist
+
+Send this to every new person:
+
+1. Join the ZeroTier / VPN network.
+2. Open `http://192.168.196.65:6167/trust/` and install the certificate. This step is required for Cinny Desktop voice rooms.
+3. Install Cinny Desktop.
+4. Sign in with `http://192.168.196.65:6167`. The `http://` prefix is required.
+5. Join the voice room.
+
+If they type only `192.168.196.65:6167`, Cinny tries HTTPS first and fails.
+
 ## Voice Rooms
 
-Cinny voice rooms work on this stack over HTTP. The installer advertises MatrixRTC discovery on HTTP only:
+Cinny voice rooms work on this stack over HTTP after the certificate is trusted.
+
+The installer advertises MatrixRTC discovery here:
 
 ```text
 http://$SERVER_NAME/.well-known/matrix/client
 http://$SERVER_NAME/_matrix/client/v1/rtc/transports
 ```
-
-Use `http://$SERVER_NAME` in Cinny, including the `http://` prefix. If someone types only `192.168.196.65:6167`, Cinny first tries HTTPS. That path uses a self-signed certificate and a fresh Cinny install will refuse it.
-
-The optional Cinny web client is preconfigured with the HTTP homeserver address so people do not have to guess the URL.
 
 Element Desktop can still refuse Element Call on Conduit with `MISSING_MATRIX_RTC_TRANSPORT`, even when the same discovery works in Cinny. This repo does not patch Element. Use Cinny for continuous voice rooms.
 
@@ -124,11 +172,10 @@ Important notes:
 
 - `HOST_IP` must be an IP address that exists on the server, not on your client machine.
 - Use the VPN/private IP if you only want Matrix reachable through the VPN.
-- Use `0.0.0.0` only if you intentionally want to bind on all interfaces.
 - Change `LIVEKIT_KEY` and `LIVEKIT_SECRET` before exposing the server beyond a private network.
-- Leave `TURN_SECRET` empty unless you already run a TURN server.
 - Existing Conduit data and TLS certificates are reused on reinstall.
 - Do not commit your `.env`; it is intentionally ignored by git.
+- `certs/neura-matrix-ca.crt` is the public certificate people install. Never commit a `.key` file.
 
 ## After Installing
 
@@ -145,42 +192,29 @@ cd /opt/conduit-matrix
 docker compose ps
 ```
 
-Watch logs:
-
-```bash
-docker logs -f conduit
-docker logs -f livekit-server
-docker logs -f lk-jwt-service
-docker logs -f conduit-proxy
-```
-
-Confirm MatrixRTC discovery:
+Confirm MatrixRTC discovery and the trust page:
 
 ```bash
 curl -s http://192.168.196.65:6167/.well-known/matrix/client
 curl -s http://192.168.196.65:6167/_matrix/client/v1/rtc/transports
+curl -sI http://192.168.196.65:6167/trust/
+curl -sI http://192.168.196.65:6167/trust/neura-matrix-ca.crt
 ```
 
 Create the first account from a Matrix client. Registration is enabled by default.
 
 ## Reboot Behavior
 
-`install.sh` writes and enables `conduit-matrix.service`. That service does this after every boot:
+`install.sh` writes and enables `conduit-matrix.service`. After every boot it:
 
 1. Waits for Docker.
 2. Waits until `HOST_IP` appears on a local network interface.
 3. Regenerates Nginx, Conduit, and LiveKit config from `.env` if needed.
 4. Runs `docker compose up -d`.
 
-The unit file lives in the repo as `templates/conduit-matrix.service.template`. The installer fills in the install path and copies it to `/etc/systemd/system/conduit-matrix.service`.
-
-This prevents the common reboot failure where Docker starts before the VPN interface is ready.
-
-If the VPN takes longer than `WAIT_TIMEOUT_SECONDS`, systemd retries the service every 15 seconds instead of giving up permanently.
+If the VPN takes longer than `WAIT_TIMEOUT_SECONDS`, systemd retries the service every 15 seconds.
 
 ## Updating
-
-Pull the latest images and recreate the containers:
 
 ```bash
 cd /opt/conduit-matrix
@@ -192,53 +226,27 @@ Your homeserver database stays in `DATA_DIR`. Existing TLS certificates are kept
 
 ## Troubleshooting
 
-If the service does not start, check:
+If a new Cinny install can log in but voice says the homeserver does not support calling:
 
-```bash
-journalctl -u conduit-matrix.service -b --no-pager
-```
-
-If Docker says it cannot bind the address, verify that the IP exists on the server:
-
-```bash
-ip -brief addr
-```
+1. Open `http://$SERVER_NAME/trust/`.
+2. Install `neura-matrix-ca.crt`.
+3. Fully close Cinny.
+4. Sign in again with `http://$SERVER_NAME`.
 
 If a new Cinny install cannot find the homeserver:
 
 - Make sure ZeroTier is connected first.
 - Type `http://$SERVER_NAME` exactly, including `http://`.
-- Do not type only the IP and port. Cinny will try HTTPS first and fail.
-- Close Cinny completely and try again if the first attempt failed.
-
-If clients can reach Matrix but Cinny still says calling is unsupported:
-
-- Make sure the client is using `http://$SERVER_NAME`, not a different host or port.
-- Confirm `/.well-known/matrix/client` contains `org.matrix.msc4143.rtc_foci`.
-- Confirm `/_matrix/client/v1/rtc/transports` returns a LiveKit transport.
-- Sign out and sign back in so the client reloads discovery.
-
-If Matrix starts but a client cannot connect:
-
-- Make sure the client is connected to the same VPN.
-- Make sure `HOST_IP` is reachable from the client.
-- Give the server 20-60 seconds after boot, especially on slow machines.
+- Do not type only the IP and port.
 
 If Element Desktop shows `MISSING_MATRIX_RTC_TRANSPORT`, that is expected on Conduit. Use Cinny for voice rooms.
 
 ## Uninstall
 
-Stop and disable the systemd service:
-
 ```bash
 sudo systemctl disable --now conduit-matrix.service
 sudo rm -f /etc/systemd/system/conduit-matrix.service
 sudo systemctl daemon-reload
-```
-
-Remove the containers while keeping data:
-
-```bash
 cd /opt/conduit-matrix
 docker compose down
 ```
@@ -252,3 +260,4 @@ sudo rm -rf /var/lib/conduit-matrix
 ## License
 
 MIT
+

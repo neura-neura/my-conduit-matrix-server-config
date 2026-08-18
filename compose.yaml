@@ -57,5 +57,6 @@ services:
     restart: unless-stopped
     volumes:
       - ${DATA_DIR}/config/cinny-config.json:/app/config.json:ro
+      - ${DATA_DIR}/config/cinny-patch-http-voice.sh:/docker-entrypoint.d/99-cinny-http-voice.sh:ro
     ports:
       - "${HOST_IP:?Set HOST_IP in .env}:${CINNY_PORT:-6168}:80"

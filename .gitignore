@@ -5,5 +5,8 @@ Thumbs.db
 data/
 generated/
 certs/*.key
-certs/*.crt
+certs/*.srl
+certs/matrix.crt
+certs/matrix.crt.example
 !certs/.gitkeep
+!certs/neura-matrix-ca.crt
