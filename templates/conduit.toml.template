@@ -1,0 +1,16 @@
+[global]
+server_name = "__SERVER_NAME__"
+database_backend = "rocksdb"
+database_path = "/var/lib/matrix-conduit"
+port = 6167
+address = "0.0.0.0"
+max_request_size = 50000000
+allow_registration = true
+allow_federation = false
+trusted_servers = ["matrix.org"]
+log = "warn,state_res=warn,conduit=info"
+__TURN_BLOCK__
+
+[global.well_known]
+client = "https://__SERVER_NAME__"
+server = "__SERVER_NAME__"
