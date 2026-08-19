@@ -24,7 +24,7 @@ server {
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
-        return 200 '{"m.homeserver":{"base_url":"http://__SERVER_NAME__"},"m.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
+        return 200 '{"m.homeserver":{"base_url":"https://__SERVER_NAME__"},"org.matrix.msc4143.rtc_foci":[{"type":"livekit","livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}],"org.matrix.msc3401.call1to1":{"enabled":true}}';
     }
 
     location = /.well-known/matrix/server {
@@ -35,11 +35,22 @@ server {
         return 200 '{"m.server":"__SERVER_NAME__"}';
     }
 
+    location = /.well-known/element/element.json {
+        default_type application/json;
+        add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
+        add_header Content-Type application/json always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+        if ($request_method = OPTIONS) { return 204; }
+        return 200 '{"element_call":{"url":"https://call.element.io","use_exclusively":false},"livekit":{"livekit_service_url":"https://__SERVER_NAME__/livekit/jwt"}}';
+    }
+
     location ^~ /_matrix/client/unstable/org.matrix.msc4143/rtc/transports {
         default_type application/json;
         add_header Access-Control-Allow-Origin * always;
         add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
-        add_header Access-Control-Allow-Headers * always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
@@ -50,7 +61,7 @@ server {
         default_type application/json;
         add_header Access-Control-Allow-Origin * always;
         add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
-        add_header Access-Control-Allow-Headers * always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
         add_header Content-Type application/json always;
         add_header Cache-Control "no-store, no-cache, must-revalidate" always;
         if ($request_method = OPTIONS) { return 204; }
@@ -76,6 +87,7 @@ server {
         add_header Access-Control-Allow-Origin * always;
         add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
         add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
+        if ($request_method = OPTIONS) { return 204; }
     }
 
     location ^~ /livekit/sfu/ {
@@ -105,6 +117,7 @@ server {
         add_header Access-Control-Allow-Origin * always;
         add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
         add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin" always;
+        if ($request_method = OPTIONS) { return 204; }
     }
 
     location = /trust {

@@ -2,7 +2,7 @@
 
 Run a self-hosted [Conduit](https://conduit.rs) Matrix homeserver with Docker Compose, bound to a VPN address such as ZeroTier, Tailscale, WireGuard, or any other private interface.
 
-This stack publishes the MatrixRTC discovery that Cinny needs for continuous voice rooms. Nginx multiplexes HTTP and HTTPS on one Matrix port, LiveKit handles media, and a systemd service waits until the VPN IP exists before starting Docker Compose.
+This stack publishes the MatrixRTC discovery used by Cinny, Element Desktop, and Element X for continuous voice rooms. Nginx multiplexes HTTP and HTTPS on one Matrix port, LiveKit handles media, and a systemd service waits until the VPN IP exists before starting Docker Compose.
 
 ## Important: every Cinny Desktop user must install the certificate
 
@@ -154,7 +154,7 @@ http://$SERVER_NAME/.well-known/matrix/client
 http://$SERVER_NAME/_matrix/client/v1/rtc/transports
 ```
 
-Element Desktop can still refuse Element Call on Conduit with `MISSING_MATRIX_RTC_TRANSPORT`, even when the same discovery works in Cinny. This repo does not patch Element. Use Cinny for continuous voice rooms.
+Element X and Element Desktop use the same MatrixRTC transport as Cinny. The well-known response must contain only `org.matrix.msc4143.rtc_foci`; do not add the older `m.rtc_foci` field at the same time, because current Element X versions reject duplicate aliases. The homeserver and LiveKit URLs are both HTTPS to avoid mixed-content discovery failures on iPhone.
 
 Sliding Sync is not required.
 
@@ -252,7 +252,7 @@ If a new Cinny install cannot find the homeserver:
 - Type `http://$SERVER_NAME` exactly, including `http://`.
 - Do not type only the IP and port.
 
-If Element Desktop shows `MISSING_MATRIX_RTC_TRANSPORT`, that is expected on Conduit. Use Cinny for voice rooms.
+If Element X or Element Desktop shows `MISSING_MATRIX_RTC_TRANSPORT`, fully close the app and reopen it after the server configuration changes so cached homeserver discovery is discarded. Confirm that the response contains `org.matrix.msc4143.rtc_foci` and does not contain `m.rtc_foci`.
 
 ## Uninstall
 

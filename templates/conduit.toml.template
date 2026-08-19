@@ -12,5 +12,5 @@ log = "warn,state_res=warn,conduit=info"
 __TURN_BLOCK__
 
 [global.well_known]
-client = "http://__SERVER_NAME__"
+client = "https://__SERVER_NAME__"
 server = "__SERVER_NAME__"
